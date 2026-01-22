@@ -1,6 +1,7 @@
 package com.utopia_ok.epr_system.price;
 
-import java.util.Date;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.persistence.GeneratedValue;
@@ -19,9 +20,9 @@ public abstract class Price {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-  private Double value;
-  private Date fromDate;
-  private Date toDate;
+  private BigInteger priceCents;
+  private LocalDate fromDate;
+  private LocalDate toDate;
 
   public Boolean isCurrent() {
     return this.toDate == null && this.fromDate != null;
@@ -29,7 +30,7 @@ public abstract class Price {
 
   // Closes the price. This method should be called when the price is no longer valid.
   // At this point, it should create a new price history.
-  public void close(Date toDate) {
+  public void close(LocalDate toDate) {
     this.toDate = toDate; 
   }
 

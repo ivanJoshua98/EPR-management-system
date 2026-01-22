@@ -1,30 +1,38 @@
 package com.utopia_ok.epr_system.supply;
 
-import java.util.Date;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import com.utopia_ok.epr_system.contact.SupplyProvider;
 import com.utopia_ok.epr_system.price.SupplyPrice;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
+@Entity
 public class Supply {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
   private String name;
+  @OneToMany(mappedBy = "supply", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<SupplyPrice> prices;
+  @ManyToOne
   private SupplyProvider provider;
-  private Integer stock;
+  private Integer stock;  
 
   @Builder
   public Supply(UUID id, String name, List<SupplyPrice> prices, SupplyProvider provider, Integer stock) {
@@ -68,7 +76,7 @@ public class Supply {
 
   // Closes the price. This method should be called when the price is no longer valid.
   // At this point, it should create a new price history.
-  public void closePrice(Date toDate) {
+  public void closePrice(LocalDate toDate) {
     this.prices.stream()
                .filter(price -> price.isCurrent())
                .findFirst()
@@ -82,11 +90,12 @@ public class Supply {
 
   // Updates the current price of the supply. 
   // Closes the previous price and creates a new one.
-  public void updateCurrentPrice(Date date, Double value) {
+  public void updateCurrentPrice(LocalDate date, BigInteger value) {
     this.closePrice(date);
     SupplyPrice newPrice = SupplyPrice.builder()
-                                      .value(value)
+                                      .priceCents(value)
                                       .fromDate(date)
+                                      .supply(this)
                                       .build();
     this.addPrice(newPrice);
   }
