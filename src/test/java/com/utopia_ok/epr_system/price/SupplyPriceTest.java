@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.Date;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,25 +36,27 @@ public class SupplyPriceTest {
   @Test
   void whenASupplyPriceIsCreatedWithValue_thenValueIsNotNull_test() {
     SupplyPrice supplyPrice = SupplyPrice.builder()
-                                        .value(250.0)
+                                        .priceCents(BigInteger.valueOf(2500))
                                         .build();
-    assertEquals(250.0, supplyPrice.getValue());
+    assertEquals(BigInteger.valueOf(2500), supplyPrice.getPriceCents());
   }
 
   @Test
   void whenASupplyPriceIsCreatedWithFromDate_thenFromDateIsNotNull_test() {
+    LocalDate now = LocalDate.now();
     SupplyPrice supplyPrice = SupplyPrice.builder()
-                                        .fromDate(new Date())
+                                        .fromDate(now)
                                         .build();
-    assertEquals(new Date(), supplyPrice.getFromDate());
+    assertEquals(now, supplyPrice.getFromDate());
   }
 
   @Test
   void whenASupplyPriceIsCreatedWithToDate_thenToDateIsNotNull_test() {
+    LocalDate now = LocalDate.now();
     SupplyPrice supplyPrice = SupplyPrice.builder()
-                                        .toDate(new Date())
+                                        .toDate(now)
                                         .build();
-    assertEquals(new Date(), supplyPrice.getToDate());
+    assertEquals(now, supplyPrice.getToDate());
   }
 
   @Test
@@ -67,20 +70,20 @@ public class SupplyPriceTest {
   @Test
   void ACurrentSupplyIsCurrentWhenToDateIsNullAndFromDateIsNotNull_test() {
     SupplyPrice supplyPrice = SupplyPrice.builder()
-                                        .fromDate(new Date())
-                                        .value(250.0)
+                                        .fromDate(LocalDate.now())
+                                        .priceCents(BigInteger.valueOf(2500))
                                         .build();
-    assertEquals(true, supplyPrice.isCurrent());
     assertNull(supplyPrice.getToDate());
+    assertEquals(true, supplyPrice.isCurrent());
   }
 
   @Test 
   void whenASupplyPriceIsClosed_thenToDateIsNotNull_test() {
     SupplyPrice supplyPrice = SupplyPrice.builder()
-                                        .fromDate(new Date())
-                                        .value(250.0)
+                                        .fromDate(LocalDate.now())
+                                        .priceCents(BigInteger.valueOf(2500))
                                         .build();
-    Date closeDate = new Date();
+    LocalDate closeDate = LocalDate.now();
     supplyPrice.close(closeDate);
 
     assertEquals(closeDate, supplyPrice.getToDate());
@@ -89,13 +92,31 @@ public class SupplyPriceTest {
   @Test
   void whenASupplyPriceIsClosed_thenIsNoLongerCurrent_test() {
     SupplyPrice supplyPrice = SupplyPrice.builder()
-                                        .fromDate(new Date())
-                                        .value(250.0)
+                                        .fromDate(LocalDate.now())
+                                        .priceCents(BigInteger.valueOf(2500))
                                         .build();
-    Date closeDate = new Date();
+    LocalDate closeDate = LocalDate.now();
     supplyPrice.close(closeDate);
     
     assertFalse(supplyPrice.isCurrent());
   } 
+
+  @Test
+  void whenASupplyPriceHasNullDateFromAndNullDateTo_thenIsNotCurrent_test() {
+    SupplyPrice supplyPrice = SupplyPrice.builder()
+                                        .fromDate(null)
+                                        .toDate(null)
+                                        .build();
+    assertEquals(false, supplyPrice.isCurrent());
+  }
+
+  @Test
+  void whenASupplyPriceHasNullDateFromAndNotNullDateTo_thenIsNotCurrent_test() {
+    SupplyPrice supplyPrice = SupplyPrice.builder()
+                                        .fromDate(null)
+                                        .toDate(LocalDate.now())
+                                        .build();
+    assertEquals(false, supplyPrice.isCurrent());
+  }
 
 }

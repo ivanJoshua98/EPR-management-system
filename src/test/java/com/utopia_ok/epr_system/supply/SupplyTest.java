@@ -2,8 +2,9 @@ package com.utopia_ok.epr_system.supply;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,7 +117,13 @@ public class SupplyTest {
     List<SupplyPrice> prices = new ArrayList<>();
     anySupply.setPrices(prices);
 
-    anySupply.updateCurrentPrice(new Date(), 315.0);
-    assertEquals(315.0, anySupply.getCurrentPrice().getValue());
+    anySupply.updateCurrentPrice(LocalDate.now(), BigInteger.valueOf(31500));
+    assertEquals(BigInteger.valueOf(31500), anySupply.getCurrentPrice().getPriceCents());
+  }
+
+  @Test
+  void whenASupplyNotHasPrices_thenTheCurrentPriceIsNull_test() {
+    anySupply.setPrices(new ArrayList<>());
+    assertEquals(null, anySupply.getCurrentPrice());
   }
 }
