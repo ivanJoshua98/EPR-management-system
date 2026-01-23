@@ -25,6 +25,8 @@ import com.utopia_ok.epr_system.price.dto.UpdatePriceRequest;
 import com.utopia_ok.epr_system.supply.dto.CreateSupplyRequest;
 import com.utopia_ok.epr_system.supply.dto.SupplyResponse;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/supplies")
 public class SupplyController {
@@ -39,7 +41,7 @@ public class SupplyController {
   }
 
   @PostMapping
-  public ResponseEntity<SupplyResponse> createSupply(@RequestBody CreateSupplyRequest supply) {
+  public ResponseEntity<SupplyResponse> createSupply(@RequestBody @Valid CreateSupplyRequest supply) {
     SupplyProvider provider = supplyProviderService.getSupplyProviderByName(supply.providerName());
     Supply supplyToCreate = Supply.builder()
                                   .name(supply.name())
@@ -81,26 +83,28 @@ public class SupplyController {
   }
 
   @GetMapping
-  public List<SupplyResponse> getAllSupplies() {
-    return supplyService.getAllSupplies()
-                        .stream()
-                        .map(supply -> new SupplyResponse(supply.getId(), 
-                                                          supply.getName(), 
-                                                          supply.getCurrentPrice().getPriceCents(), 
-                                                          supply.getProvider().getName(), 
-                                                          supply.getStock()))
-                        .collect(Collectors.toList());
+  public ResponseEntity<List<SupplyResponse>> getAllSupplies() {
+    return ResponseEntity.status(HttpStatus.OK)
+                         .body(supplyService.getAllSupplies()
+                         .stream()
+                         .map(supply -> new SupplyResponse(supply.getId(), 
+                                                           supply.getName(), 
+                                                           supply.getCurrentPrice().getPriceCents(), 
+                                                           supply.getProvider().getName(), 
+                                                           supply.getStock()))
+                         .collect(Collectors.toList()));
   }
 
   @PutMapping("/{id}")
-  public SupplyResponse updateSupplyPrice(@PathVariable UUID id, @RequestBody UpdatePriceRequest request) {
+  public ResponseEntity<SupplyResponse> updateSupplyPrice(@PathVariable UUID id, @RequestBody @Valid UpdatePriceRequest request) {
     Supply supply = supplyService.getSupply(id);
     supply.updateCurrentPrice(LocalDate.parse(request.date()), request.priceCents());
     supplyService.updateSupply(supply);
-    return new SupplyResponse( supply.getId(), 
-                               supply.getName(), 
-                               supply.getCurrentPrice().getPriceCents(), 
-                               supply.getProvider().getName(), 
-                               supply.getStock());
+    return ResponseEntity.status(HttpStatus.OK)
+                         .body(new SupplyResponse( supply.getId(), 
+                                                   supply.getName(), 
+                                                   supply.getCurrentPrice().getPriceCents(), 
+                                                   supply.getProvider().getName(), 
+                                                   supply.getStock()));
   }
 }

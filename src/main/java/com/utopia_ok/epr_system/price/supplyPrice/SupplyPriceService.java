@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.utopia_ok.epr_system.exceptions.ResourseNotFoundException;
 import com.utopia_ok.epr_system.price.SupplyPrice;
 
 @Service
@@ -22,7 +23,7 @@ public class SupplyPriceService {
   }
 
   public SupplyPrice getSupplyPrice(UUID id) {
-    return supplyPriceRepository.findById(id).orElse(null);
+    return supplyPriceRepository.findById(id).orElseThrow(() -> new ResourseNotFoundException("Supply price with id " + id + " not found"));
   }
 
   public SupplyPrice updateSupplyPrice(SupplyPrice supplyPrice) {

@@ -6,6 +6,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.utopia_ok.epr_system.exceptions.ResourseAlreadyExistsException;
+import com.utopia_ok.epr_system.exceptions.ResourseNotFoundException;
+
 @Service
 public class SupplyService {
   
@@ -17,11 +20,20 @@ public class SupplyService {
   }
 
   public Supply createSupply(Supply supply) {
-    return supplyRepository.save(supply);
+    try {
+      getSupplyByName(supply.getName());
+      throw new ResourseAlreadyExistsException("Supply with name " + supply.getName() + " already exists");
+    } catch (ResourseNotFoundException e) {
+      return supplyRepository.save(supply);
+    }
+  }
+
+  public Supply getSupplyByName(String name) {
+    return supplyRepository.findByName(name).orElseThrow(() -> new ResourseNotFoundException("Supply with name " + name + " not found"));
   }
 
   public Supply getSupply(UUID id) {
-    return supplyRepository.findById(id).orElse(null);
+    return supplyRepository.findById(id).orElseThrow(() -> new ResourseNotFoundException("Supply with id " + id + " not found"));
   }
 
   public Supply updateSupply(Supply supply) {
