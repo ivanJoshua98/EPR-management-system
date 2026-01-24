@@ -40,7 +40,7 @@ public class SupplyController {
     this.supplyProviderService = supplyProviderService;
   }
 
-  @PostMapping
+  @PostMapping("/create")
   public ResponseEntity<SupplyResponse> createSupply(@RequestBody @Valid CreateSupplyRequest supply) {
     SupplyProvider provider = supplyProviderService.getSupplyProviderByName(supply.providerName());
     Supply supplyToCreate = Supply.builder()
@@ -82,7 +82,7 @@ public class SupplyController {
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
-  @GetMapping
+  @GetMapping("/all")
   public ResponseEntity<List<SupplyResponse>> getAllSupplies() {
     return ResponseEntity.status(HttpStatus.OK)
                          .body(supplyService.getAllSupplies()
@@ -95,7 +95,7 @@ public class SupplyController {
                          .collect(Collectors.toList()));
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/{id}/update-price")
   public ResponseEntity<SupplyResponse> updateSupplyPrice(@PathVariable UUID id, @RequestBody @Valid UpdatePriceRequest request) {
     Supply supply = supplyService.getSupply(id);
     supply.updateCurrentPrice(LocalDate.parse(request.date()), request.priceCents());

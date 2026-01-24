@@ -31,7 +31,7 @@ public class SupplyProviderController {
     this.supplyProviderService = supplyProviderService;
   }
 
-  @PostMapping
+  @PostMapping("/create")
   public ResponseEntity<SupplyProviderResponse> createSupplyProvider(@RequestBody @Valid CreateSupplyProviderRequest request) {
     SupplyProvider provider = supplyProviderService.createSupplyProvider(SupplyProvider.builder()
                                                                                        .name(request.name())
@@ -62,7 +62,7 @@ public class SupplyProviderController {
                          .body(null);
   }
 
-  @GetMapping
+  @GetMapping("/all")
   public ResponseEntity<List<SupplyProviderResponse>> getAllSupplyProviders() {
     return ResponseEntity.status(HttpStatus.OK)
                          .body(supplyProviderService.getAllSupplyProviders()
