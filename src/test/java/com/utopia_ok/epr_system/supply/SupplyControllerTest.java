@@ -110,12 +110,12 @@ public class SupplyControllerTest {
 
   @Test
   void whenDeleteSupply_thenReturnNoContentStatus() throws Exception {
-    UUID anyId = UUID.randomUUID();
-    restTestClient.delete().uri("/supplies/{id}", anyId)
+    UUID id = UUID.randomUUID();
+    restTestClient.delete().uri("/supplies/{id}", id.toString())
                   .exchange()
                   .expectStatus().isNoContent();
 
-    verify(supplyService, times(1)).deleteSupply(anyId);
+    verify(supplyService, times(1)).deleteSupply(id);
   }
 
   @Test

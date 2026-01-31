@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.utopia_ok.epr_system.contact.SupplyProvider;
-import com.utopia_ok.epr_system.exceptions.ResourseAlreadyExistsException;
-import com.utopia_ok.epr_system.exceptions.ResourseNotFoundException;
+import com.utopia_ok.epr_system.exceptions.ResourceAlreadyExistsException;
+import com.utopia_ok.epr_system.exceptions.ResourceNotFoundException;
 
 public class SupplyProviderServiceTest {
   private SupplyProviderService supplyProviderService;
@@ -38,7 +38,7 @@ public class SupplyProviderServiceTest {
   void whenSupplyProviderIsCreatedWithExistingName_thenThrowException() {
     SupplyProvider supplyProvider = SupplyProvider.builder().name("Existing Name").build();
     Mockito.when(supplyProviderRepository.findByName(supplyProvider.getName())).thenReturn(Optional.of(supplyProvider));
-    assertThrows(ResourseAlreadyExistsException.class, () -> supplyProviderService.createSupplyProvider(supplyProvider));
+    assertThrows(ResourceAlreadyExistsException.class, () -> supplyProviderService.createSupplyProvider(supplyProvider));
   }
 
   @Test
@@ -51,7 +51,7 @@ public class SupplyProviderServiceTest {
   @Test
   void whenSupplyProviderIsNotFound_thenThrowException() {
     Mockito.when(supplyProviderRepository.findById(invalidId)).thenReturn(Optional.empty());
-    assertThrows(ResourseNotFoundException.class, () -> supplyProviderService.getSupplyProvider(invalidId));
+    assertThrows(ResourceNotFoundException.class, () -> supplyProviderService.getSupplyProvider(invalidId));
   }
 
   @Test
@@ -77,7 +77,7 @@ public class SupplyProviderServiceTest {
   @Test
   void whenSupplyProviderIsNotFoundByName_thenThrowException() {
     Mockito.when(supplyProviderRepository.findByName("Non-existent Name")).thenReturn(Optional.empty());
-    assertThrows(ResourseNotFoundException.class, () -> supplyProviderService.getSupplyProviderByName("Non-existent Name"));
+    assertThrows(ResourceNotFoundException.class, () -> supplyProviderService.getSupplyProviderByName("Non-existent Name"));
   }
 
   @Test

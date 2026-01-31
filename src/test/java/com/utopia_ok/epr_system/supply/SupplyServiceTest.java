@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.utopia_ok.epr_system.exceptions.ResourseAlreadyExistsException;
-import com.utopia_ok.epr_system.exceptions.ResourseNotFoundException;
+import com.utopia_ok.epr_system.exceptions.ResourceAlreadyExistsException;
+import com.utopia_ok.epr_system.exceptions.ResourceNotFoundException;
 
 public class SupplyServiceTest {
 
@@ -38,7 +38,7 @@ public class SupplyServiceTest {
   void whenSupplyIsCreatedWithExistingName_thenThrowException() {
     Supply supply = Supply.builder().name("Existing Name").build();
     Mockito.when(supplyRepository.findByName("Existing Name")).thenReturn(Optional.of(supply));
-    assertThrows(ResourseAlreadyExistsException.class, () -> supplyService.createSupply(supply));
+    assertThrows(ResourceAlreadyExistsException.class, () -> supplyService.createSupply(supply));
   }
 
   @Test
@@ -51,7 +51,7 @@ public class SupplyServiceTest {
   @Test
   void whenSupplyIsNotFound_thenThrowException() {
     Mockito.when(supplyRepository.findById(invalidId)).thenReturn(Optional.empty());
-    assertThrows(ResourseNotFoundException.class, () -> supplyService.getSupply(invalidId));
+    assertThrows(ResourceNotFoundException.class, () -> supplyService.getSupply(invalidId));
   }
 
   @Test
@@ -83,6 +83,6 @@ public class SupplyServiceTest {
   @Test
   void whenSupplyIsNotFoundByName_thenThrowException() {
     Mockito.when(supplyRepository.findByName("Non-existent Name")).thenReturn(Optional.empty());
-    assertThrows(ResourseNotFoundException.class, () -> supplyService.getSupplyByName("Non-existent Name"));
+    assertThrows(ResourceNotFoundException.class, () -> supplyService.getSupplyByName("Non-existent Name"));
   }
 }

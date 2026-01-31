@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.utopia_ok.epr_system.exceptions.ResourseNotFoundException;
+import com.utopia_ok.epr_system.exceptions.ResourceNotFoundException;
 import com.utopia_ok.epr_system.price.SupplyPrice;
 
 public class SupplyPriceServiceTest {
@@ -63,6 +63,6 @@ public class SupplyPriceServiceTest {
   @Test
   void whenSupplyPriceIsNotFound_thenThrowException() {
     Mockito.when(supplyPriceRepository.findById(invalidId)).thenReturn(Optional.empty());
-    assertThrows(ResourseNotFoundException.class, () -> supplyPriceService.getSupplyPrice(invalidId));
+    assertThrows(ResourceNotFoundException.class, () -> supplyPriceService.getSupplyPrice(invalidId));
   }
 }
